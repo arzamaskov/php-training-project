@@ -31,7 +31,14 @@ class Router
     {
         foreach (self::$route_list as $pattern => $route) {
             if (preg_match("#$pattern#i", $url, $matches)) {
-                debug($matches);
+                foreach ($matches as $key => $value) {
+                    if (is_string($key)) {
+                        $route[$key] = $value;
+                    }
+                }
+                if(!isset($route['mode'])) {
+                    $route['mode'] = 'index';
+                }
                 self::$route = $route;
 
                 return true;
@@ -43,8 +50,8 @@ class Router
 
     public static function dispatch($url)
     {
-        if(self::matchRoute($url)) {
-           echo 'OK';
+        if (self::matchRoute($url)) {
+            echo 'OK';
         } else {
             http_response_code(404);
             include '404.html';
