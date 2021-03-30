@@ -22,11 +22,23 @@ class Router
         return self::$route_list;
     }
 
+    /**
+     * Return current route.
+     *
+     * @return array
+     */
     public static function getRoute()
     {
         return self::$route;
     }
 
+    /**
+     * Finds a route in the routes list.
+     *
+     * @param string $url incoming URL
+     *
+     * @return bool
+     */
     public static function matchRoute($url)
     {
         foreach (self::$route_list as $pattern => $route) {
@@ -48,20 +60,35 @@ class Router
         return false;
     }
 
+    /**
+     * Redirect URL to the valid route.
+     *
+     * @param string $url incoming URL
+     *
+     * @return void
+     */
     public static function dispatch($url)
     {
         if (self::matchRoute($url)) {
-            $controller = self::$route['controller'];
+            $controller = self::upperCamelCase(self::$route['controller']);
             $mode = self::$route['mode'];
 
             if (class_exists($controller)) {
                 echo 'OK';
             } else {
-                "Контроллер $controller не найден";
+                echo "Контроллер <b>$controller</b> не найден";
             }
         } else {
             http_response_code(404);
             include '404.html';
         }
+    }
+
+    protected static function upperCamelCase($name)
+    {
+        $name = str_replace('-', ' ', $name);
+        $name = ucwords($name);
+        $name = str_replace(' ', '', $name);
+        return $name;
     }
 }
