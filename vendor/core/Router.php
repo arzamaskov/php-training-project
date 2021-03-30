@@ -36,7 +36,7 @@ class Router
                         $route[$key] = $value;
                     }
                 }
-                if(!isset($route['mode'])) {
+                if (!isset($route['mode'])) {
                     $route['mode'] = 'index';
                 }
                 self::$route = $route;
@@ -51,7 +51,14 @@ class Router
     public static function dispatch($url)
     {
         if (self::matchRoute($url)) {
-            echo 'OK';
+            $controller = self::$route['controller'];
+            $mode = self::$route['mode'];
+
+            if (class_exists($controller)) {
+                echo 'OK';
+            } else {
+                "Контроллер $controller не найден";
+            }
         } else {
             http_response_code(404);
             include '404.html';
